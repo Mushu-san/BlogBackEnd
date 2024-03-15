@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/clientes/**", "/api/test/**").permitAll()
-                        .requestMatchers("/api/noticias/**", "/api/categorias/**").hasRole(Role.USER.name())
+                        .requestMatchers("/api/noticias/**", "/api/categorias/**").hasAuthority(Role.USER.name())
                 .anyRequest().authenticated())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

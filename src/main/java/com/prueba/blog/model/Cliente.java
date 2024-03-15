@@ -10,8 +10,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -37,7 +39,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class Cliente implements Serializable, UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cliente")
     private Long idCliente;
 
@@ -59,12 +61,13 @@ public class Cliente implements Serializable, UserDetails {
     @Column(name = "estado")
     private char estado;
 
+    @Transient
     @Enumerated(EnumType.STRING)
     private Role rol;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(rol.name()));
+        return List.of(new SimpleGrantedAuthority(Role.USER.name()));
     }
 
     @Override
