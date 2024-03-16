@@ -11,14 +11,15 @@ import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 /**
  *
@@ -87,26 +88,26 @@ public class ClienteService {
         var emailRegex = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$";
         
         if(email == null){
-            throw new RuntimeException("No se encuentra ningun email ingresado, por favor valide");
+            throw new HttpClientErrorException( HttpStatus.BAD_REQUEST,"No se encuentra ningun email ingresado, por favor valide");
         }
 
         boolean alreadyUse = this.clienteRepository.existsByCorreo(email);
 
         if (!email.matches(emailRegex)) {
-            throw new RuntimeException("Los caracteres ingresados en el email son invalidos, por favor valide");
+            throw new HttpClientErrorException( HttpStatus.BAD_REQUEST,"Los caracteres ingresados en el email son invalidos, por favor valide");
         }
 
         if (alreadyUse) {
-            throw new RuntimeException("El correo que esta tratando de utilizar ya se encuentra en uso");
+            throw new HttpClientErrorException( HttpStatus.BAD_REQUEST,"El correo que esta tratando de utilizar ya se encuentra en uso");
         }
 
         if (password.length() < 8 || password.length() > 16) {
-            throw new RuntimeException("La cantidad de caracteres ingresada en la contraseña es invalida, por favor valide");
+            throw new HttpClientErrorException( HttpStatus.BAD_REQUEST,"La cantidad de caracteres ingresada en la contraseña es invalida, por favor valide");
         }
 
-        if (!name.matches(regex) || !lastname.matches(regex)) {
-            throw new RuntimeException("Los caracteres ingresados son invalidos, por favor valide");
-        }
+//        if (!name.toLowerCase().matches(regex) || !lastname.toLowerCase().matches(regex)) {
+//            throw new HttpClientErrorException( HttpStatus.BAD_REQUEST,"Los caracteres ingresados son invalidos, por favor valide");
+//        }
 
         return true;
     }

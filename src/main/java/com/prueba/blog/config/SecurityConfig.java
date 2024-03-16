@@ -6,6 +6,7 @@ package com.prueba.blog.config;
 
 import com.prueba.blog.Constants.Role;
 import com.prueba.blog.security.JwtFilter;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 /**
  *
@@ -33,12 +35,19 @@ public class SecurityConfig {
     private JwtFilter jwtFilter;
     
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf((configurer) -> configurer.disable())
+                .cors((custom) -> custom.configurationSource(request -> {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOrigins(Arrays.asList("*"));
+            configuration.setAllowedMethods(Arrays.asList("*"));
+            configuration.setAllowedHeaders(Arrays.asList("*"));
+            return configuration;
+        }))
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/clientes/**", "/api/test/**").permitAll()
-                        .requestMatchers("/api/noticias/**", "/api/categorias/**").hasAuthority(Role.USER.name())
+                .requestMatchers("/api/clientes/**", "/api/test/**").permitAll()
+                .requestMatchers("/api/noticias/**", "/api/categorias/**").hasAuthority(Role.USER.name())
                 .anyRequest().authenticated())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
@@ -46,6 +55,5 @@ public class SecurityConfig {
         
         return http.build();
     }
-    
     
 }

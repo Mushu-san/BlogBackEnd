@@ -31,7 +31,7 @@ public class ClienteController {
         return ResponseEntity.ok(this.clienteService.signIn(dto));
     }
     
-    @PostMapping(path = "authenticate", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "authenticate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> authenticate(@RequestBody Map<String, Object> dto){
         return ResponseEntity.ok(this.clienteService.signUp(dto));
     }

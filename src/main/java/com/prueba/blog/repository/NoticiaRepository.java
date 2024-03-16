@@ -4,9 +4,9 @@
  */
 package com.prueba.blog.repository;
 
+import com.prueba.blog.Projections.NoticiaProjection;
 import com.prueba.blog.model.Noticia;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,11 +21,11 @@ public interface NoticiaRepository extends JpaRepository<Noticia, Long> {
 
     Optional<Noticia> findByIdNoticiaAndEstado(Long id, char estado);
 
-    @Query(value = "SELECT n.* FROM \n"
+    @Query(value = "SELECT distinct n.* FROM \n"
             + "noticias n\n"
             + "inner join \n"
             + "noticias_categorias ng on ng.id_noticia = n.id_noticia\n"
-            + "where ng.id_categoria = :idCategoria\n"
+            + "where ng.id_categoria in (:idCategoria)\n"
             + "and n.estado = 'a';", nativeQuery = true)
-    List<Map<String,Object>> findNewsByCategorie(Long id);
+    List<NoticiaProjection> findNewsByCategorie(List<Long> idCategoria);
 }
